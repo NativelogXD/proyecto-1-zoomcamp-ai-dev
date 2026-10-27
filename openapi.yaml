@@ -1,0 +1,572 @@
+openapi: 3.0.3
+info:
+  title: CloudOps Commander API
+  description: Autonomous AI Incident Management and Cloud Operations Platform API.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://cloudops-commander.onrender.com
+    description: Cloud production server
+
+paths:
+  /healthz:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the API, timestamp, and database connectivity.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/v1/system/summary:
+    get:
+      summary: System overview metrics
+      description: Returns aggregated metrics including total services, active incidents, resolved count, and system status.
+      operationId: getSystemSummary
+      responses:
+        '200':
+          description: Aggregated system summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemSummaryResponse'
+
+  /api/v1/services:
+    get:
+      summary: List all monitored microservices
+      operationId: listServices
+      responses:
+        '200':
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+    post:
+      summary: Register a new service
+      operationId: createService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCreate'
+      responses:
+        '201':
+          description: Service created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '400':
+          description: Invalid service data
+
+  /api/v1/services/{service_id}:
+    get:
+      summary: Get service details by ID
+      operationId: getServiceById
+      parameters:
+        - name: service_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Service found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '404':
+          description: Service not found
+
+  /api/v1/incidents:
+    get:
+      summary: List incidents
+      description: Retrieves incidents with optional filtering by status or severity.
+      operationId: listIncidents
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/IncidentStatusEnum'
+        - name: severity
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/IncidentSeverityEnum'
+      responses:
+        '200':
+          description: List of incidents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Incident'
+    post:
+      summary: Create an incident manually
+      operationId: createIncident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncidentCreate'
+      responses:
+        '201':
+          description: Incident created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+
+  /api/v1/incidents/{incident_id}:
+    get:
+      summary: Get incident details
+      operationId: getIncidentById
+      parameters:
+        - name: incident_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Incident details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+        '404':
+          description: Incident not found
+    patch:
+      summary: Update incident status or details
+      operationId: updateIncident
+      parameters:
+        - name: incident_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncidentUpdate'
+      responses:
+        '200':
+          description: Incident updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+        '404':
+          description: Incident not found
+
+  /api/v1/incidents/{incident_id}/investigate:
+    post:
+      summary: Trigger AI root cause investigation
+      description: Analyzes incident telemetry, logs, and stack traces to produce an evidence packet and remediation recommendations.
+      operationId: investigateIncident
+      parameters:
+        - name: incident_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: AI diagnostic report generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestigationResult'
+        '404':
+          description: Incident not found
+
+  /api/v1/runbooks:
+    get:
+      summary: List available remediation runbooks
+      operationId: listRunbooks
+      responses:
+        '200':
+          description: Catalog of operational runbooks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Runbook'
+
+  /api/v1/runbooks/{runbook_id}/execute:
+    post:
+      summary: Execute an SRE runbook
+      description: Triggers an atomic, validated remediation action against target service or infrastructure.
+      operationId: executeRunbook
+      parameters:
+        - name: runbook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunbookExecutionRequest'
+      responses:
+        '200':
+          description: Runbook executed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunbookExecutionResult'
+        '400':
+          description: Parameter validation failed
+        '404':
+          description: Runbook not found
+
+  /api/v1/webhooks/alert:
+    post:
+      summary: Ingest Prometheus/Grafana alert webhook
+      description: Processes external alert notifications and automatically spawns a tracked incident.
+      operationId: ingestAlertWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertWebhookPayload'
+      responses:
+        '201':
+          description: Alert ingested and incident generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+        '400':
+          description: Malformed webhook payload
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+        - database
+      properties:
+        status:
+          type: string
+          example: "ok"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-10-27T12:00:00Z"
+        database:
+          type: string
+          example: "connected"
+        version:
+          type: string
+          example: "1.0.0"
+
+    SystemSummaryResponse:
+      type: object
+      required:
+        - total_services
+        - healthy_services
+        - active_incidents
+        - resolved_incidents
+        - system_status
+      properties:
+        total_services:
+          type: integer
+          example: 5
+        healthy_services:
+          type: integer
+          example: 4
+        active_incidents:
+          type: integer
+          example: 1
+        resolved_incidents:
+          type: integer
+          example: 12
+        system_status:
+          type: string
+          enum: [OPERATIONAL, DEGRADED, CRITICAL]
+          example: "DEGRADED"
+
+    ServiceStatusEnum:
+      type: string
+      enum: [HEALTHY, DEGRADED, DOWN]
+      example: "HEALTHY"
+
+    Service:
+      type: object
+      required:
+        - id
+        - name
+        - environment
+        - status
+        - latency_ms
+        - error_rate
+        - uptime_percentage
+      properties:
+        id:
+          type: string
+          example: "srv-orders"
+        name:
+          type: string
+          example: "Order API"
+        description:
+          type: string
+          example: "Handles order checkout and payment processing"
+        environment:
+          type: string
+          example: "production"
+        status:
+          $ref: '#/components/schemas/ServiceStatusEnum'
+        latency_ms:
+          type: number
+          example: 45.2
+        error_rate:
+          type: number
+          example: 0.05
+        uptime_percentage:
+          type: number
+          example: 99.95
+
+    ServiceCreate:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          example: "srv-payments"
+        name:
+          type: string
+          example: "Payment Gateway"
+        description:
+          type: string
+          example: "External Stripe and PayPal integrations"
+        environment:
+          type: string
+          default: "production"
+
+    IncidentStatusEnum:
+      type: string
+      enum: [OPEN, INVESTIGATING, MITIGATED, RESOLVED]
+      example: "OPEN"
+
+    IncidentSeverityEnum:
+      type: string
+      enum: [P1, P2, P3, P4]
+      example: "P1"
+
+    Incident:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - service_id
+        - severity
+        - status
+        - created_at
+      properties:
+        id:
+          type: string
+          example: "inc-101"
+        title:
+          type: string
+          example: "High 5xx error rate on Order API"
+        description:
+          type: string
+          example: "HTTP 500 error spikes observed on /api/orders endpoint"
+        service_id:
+          type: string
+          example: "srv-orders"
+        severity:
+          $ref: '#/components/schemas/IncidentSeverityEnum'
+        status:
+          $ref: '#/components/schemas/IncidentStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        root_cause:
+          type: string
+          nullable: true
+        ai_recommendation:
+          type: string
+          nullable: true
+
+    IncidentCreate:
+      type: object
+      required:
+        - title
+        - description
+        - service_id
+        - severity
+      properties:
+        title:
+          type: string
+          example: "Database connection pool exhaustion"
+        description:
+          type: string
+          example: "Connection pool reached 100% capacity"
+        service_id:
+          type: string
+          example: "srv-orders"
+        severity:
+          $ref: '#/components/schemas/IncidentSeverityEnum'
+
+    IncidentUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/IncidentStatusEnum'
+        root_cause:
+          type: string
+        ai_recommendation:
+          type: string
+
+    InvestigationResult:
+      type: object
+      required:
+        - incident_id
+        - confidence_score
+        - root_cause
+        - evidence_packet
+        - recommended_runbook_id
+      properties:
+        incident_id:
+          type: string
+          example: "inc-101"
+        confidence_score:
+          type: number
+          example: 94.5
+        root_cause:
+          type: string
+          example: "Deadlock on table orders during express checkout batch execution"
+        evidence_packet:
+          type: object
+          properties:
+            log_snippet:
+              type: string
+            error_code:
+              type: string
+            recent_commit:
+              type: string
+        recommended_runbook_id:
+          type: string
+          example: "rb-restart-service"
+        action_plan:
+          type: array
+          items:
+            type: string
+
+    Runbook:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - target_service_id
+        - requires_confirmation
+      properties:
+        id:
+          type: string
+          example: "rb-restart-service"
+        title:
+          type: string
+          example: "Graceful Container Restart"
+        description:
+          type: string
+          example: "Restarts target microservice container gracefully with zero downtime"
+        target_service_id:
+          type: string
+          example: "srv-orders"
+        requires_confirmation:
+          type: boolean
+          example: true
+        parameters_schema:
+          type: object
+
+    RunbookExecutionRequest:
+      type: object
+      required:
+        - incident_id
+      properties:
+        incident_id:
+          type: string
+          example: "inc-101"
+        parameters:
+          type: object
+          default: {}
+
+    RunbookExecutionResult:
+      type: object
+      required:
+        - runbook_id
+        - execution_id
+        - status
+        - execution_time_ms
+        - logs
+      properties:
+        runbook_id:
+          type: string
+          example: "rb-restart-service"
+        execution_id:
+          type: string
+          example: "exec-9923"
+        status:
+          type: string
+          enum: [SUCCESS, FAILED]
+          example: "SUCCESS"
+        execution_time_ms:
+          type: number
+          example: 1250.0
+        logs:
+          type: array
+          items:
+            type: string
+
+    AlertWebhookPayload:
+      type: object
+      required:
+        - alert_name
+        - service_id
+        - severity
+      properties:
+        alert_name:
+          type: string
+          example: "HighHttp5xxRate"
+        service_id:
+          type: string
+          example: "srv-orders"
+        severity:
+          $ref: '#/components/schemas/IncidentSeverityEnum'
+        summary:
+          type: string
+          example: "5xx rate exceeded 5% threshold in 5m window"
+        details:
+          type: string
+          example: "HTTP 500 returned on route /api/orders/checkout"
