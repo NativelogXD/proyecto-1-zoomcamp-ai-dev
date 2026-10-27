@@ -1,43 +1,43 @@
 ---
 name: investigate-incident
-description: Autonomous step-by-step procedure for investigating production incidents, analyzing telemetry packets, and recommending SRE runbooks.
+description: Procedimiento operativo estructurado para investigacion de incidentes de produccion, analisis de telemetria y seleccion de manuales SRE.
 ---
 
-# Skill: Production Incident Investigation
+# Habilidad: Investigacion de Incidentes en Produccion
 
-Use this skill whenever an alert triggers or an incident is opened in CloudOps Commander.
+Utilizar esta habilidad cuando se reciba una alerta de monitoreo o se aperture un incidente operativo en el sistema.
 
-## Step 1: Ingest Context & Identify Service
-1. Query the incident details:
+## Paso 1: Ingesta de Contexto e Identificacion del Servicio
+1. Consultar el detalle del incidente:
    ```bash
-   curl -s http://localhost:8000/api/v1/incidents/<incident_id>
+   curl -s http://localhost:8000/api/v1/incidents/<id_incidente>
    ```
-2. Retrieve current telemetry of the target service:
+2. Obtener la telemetria actual del microservicio afectado:
    ```bash
-   curl -s http://localhost:8000/api/v1/services/<service_id>
+   curl -s http://localhost:8000/api/v1/services/<id_servicio>
    ```
 
-## Step 2: Correlate Signals & Synthesize Evidence Packet
-1. Review recent logs for `5xx`, `timeout`, or deadlock patterns.
-2. Check if a recent commit or deployment coincides with the error spike.
-3. Classify severity:
-   - `P1`: Total service outage or >5% error rate on critical paths.
-   - `P2`: High degradation or latency exceeding 1000ms.
-   - `P3`: Minor warning / intermittent failure.
+## Paso 2: Correlacion de Senales y Paquete de Evidencia
+1. Inspeccionar registros en busca de patrones `5xx`, tiempos de espera agotados o bloqueos de concurrencia.
+2. Comprobar si existio un despliegue reciente coincidente con la degradacion.
+3. Clasificar severidad:
+   - `P1`: Interrupcion total o tasa de fallas > 5% en rutas criticas.
+   - `P2`: Degradacion severa o latencia p95 > 1000ms.
+   - `P3`: Advertencia o fallo intermitente.
 
-## Step 3: Trigger AI Diagnostic Analysis
-1. Invoke the AI Investigator endpoint:
+## Paso 3: Activacion del Diagnostico por IA
+1. Invocar el endpoint de investigacion:
    ```bash
-   curl -s -X POST http://localhost:8000/api/v1/incidents/<incident_id>/investigate
+   curl -s -X POST http://localhost:8000/api/v1/incidents/<id_incidente>/investigate
    ```
-2. Verify confidence score and recommended runbook ID.
+2. Validar el puntaje de certeza y el identificador de runbook sugerido.
 
-## Step 4: Propose or Execute Remediation
-1. If the recommended runbook has `requires_confirmation: true`, prompt the human SRE operator before running.
-2. If confirmed, execute the runbook:
+## Paso 4: Propuesta y Ejecucion del Procedimiento de Mitigacion
+1. Si el runbook recomendado posee `requires_confirmation: true`, solicitar autorizacion al operador humano.
+2. Tras la confirmacion, despachar la ejecucion:
    ```bash
-   curl -s -X POST http://localhost:8000/api/v1/runbooks/<runbook_id>/execute \
+   curl -s -X POST http://localhost:8000/api/v1/runbooks/<id_runbook>/execute \
      -H "Content-Type: application/json" \
-     -d '{"incident_id": "<incident_id>", "parameters": {}}'
+     -d '{"incident_id": "<id_incidente>", "parameters": {}}'
    ```
-3. Verify that the target service health status returns to `HEALTHY`.
+3. Comprobar que el estado de salud del servicio retorne a `HEALTHY`.

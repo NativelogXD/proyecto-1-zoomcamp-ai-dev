@@ -1,26 +1,26 @@
-# CloudOps Commander MCP Server
+# Servidor Model Context Protocol (MCP) — CloudOps Commander
 
-This MCP server equips AI coding agents (Claude Code, Cursor, Antigravity, OpenCode) with scoped operational tools to monitor, investigate, and remediate incidents in CloudOps Commander.
+Este servidor MCP expone herramientas operativas seguras a asistentes y agentes de codigo (Claude Code, Cursor, Antigravity, OpenCode).
 
-## Exposed Tools
+## Herramientas Expuestas
 
-| Tool Name | Description | Permissions |
+| Nombre de la Herramienta | Descripcion Funcional | Nivel de Privilegio |
 | :--- | :--- | :--- |
-| `list_active_incidents` | Retrieves open and investigating incidents. | Read-Only |
-| `get_service_telemetry` | Inspects uptime, error rates, and p95 latency for a microservice. | Read-Only |
-| `trigger_ai_investigation` | Synthesizes logs and generates an evidence packet. | Read / Analyze |
-| `execute_remediation_runbook` | Applies an atomic, pre-validated operational runbook. | Execute (Requires confirmation) |
+| `list_active_incidents` | Consulta los incidentes abiertos o en estado de investigacion. | Solo Lectura |
+| `get_service_telemetry` | Obtiene disponibilidad, tasa de error y latencia p95 de un servicio. | Solo Lectura |
+| `trigger_ai_investigation` | Correlaciona registros y genera un paquete de evidencias. | Analisis / Diagnostico |
+| `execute_remediation_runbook` | Ejecuta un procedimiento operativo preaprobado y validado. | Ejecucion (Requiere autorizacion) |
 
-## Configuration
+## Configuracion del Cliente
 
-Add the following to your MCP client configuration (e.g. `claude_desktop_config.json` or Antigravity MCP settings):
+Agregar la siguiente seccion en la configuracion de servidores MCP de su entorno:
 
 ```json
 {
   "mcpServers": {
     "cloudops-commander": {
       "command": "python",
-      "args": ["c:/Users/xiao/Documents/cursos/datatalcks/ai zoom/cloudops-commander/mcp-server/server.py"],
+      "args": ["c:/Users/xiao/Documents/cursos/datatalcks/ai zoom/proyecto-1-zoomcamp-ai-dev/mcp-server/server.py"],
       "env": {
         "CLOUDOPS_API_URL": "http://localhost:8000"
       }

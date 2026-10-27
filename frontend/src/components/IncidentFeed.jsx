@@ -16,7 +16,7 @@ export default function IncidentFeed({
     <div className="panel" id="panel-incidents-feed">
       <div className="panel-header">
         <h2 className="panel-title">
-          <span>🚨</span> Active Incidents Feed
+          Registro de Incidentes Activos
         </h2>
 
         <div style={{ display: 'flex', gap: '0.4rem' }}>
@@ -40,7 +40,7 @@ export default function IncidentFeed({
       <div className="incidents-list" id="incidents-container">
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
-            No incidents found for current filter.
+            No se registran incidentes bajo el filtro seleccionado.
           </div>
         ) : (
           filtered.map((inc) => {
@@ -68,7 +68,7 @@ export default function IncidentFeed({
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.25rem' }}>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Target: <code>{inc.service_id}</code> &bull; {new Date(inc.created_at).toLocaleTimeString()}
+                    Objetivo: <code>{inc.service_id}</code> &bull; {new Date(inc.created_at).toLocaleTimeString()}
                   </span>
 
                   {inc.status !== 'RESOLVED' && (
@@ -81,7 +81,7 @@ export default function IncidentFeed({
                         onInvestigate(inc.id);
                       }}
                     >
-                      🤖 AI Investigate
+                      Diagnosticar con IA
                     </button>
                   )}
                 </div>

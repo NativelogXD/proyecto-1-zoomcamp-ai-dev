@@ -4,7 +4,7 @@ export default function SimulateAlertModal({ isOpen, onClose, onSimulate }) {
   const [alertName, setAlertName] = useState('HighHttp5xxErrorRate');
   const [serviceId, setServiceId] = useState('srv-orders');
   const [severity, setSeverity] = useState('P1');
-  const [summary, setSummary] = useState('HTTP 500 error rate spiked past 5% on checkout endpoint');
+  const [summary, setSummary] = useState('La tasa de respuestas HTTP 500 supero el umbral critico del 5%');
 
   if (!isOpen) return null;
 
@@ -15,7 +15,7 @@ export default function SimulateAlertModal({ isOpen, onClose, onSimulate }) {
       service_id: serviceId,
       severity,
       summary,
-      details: 'Automated Grafana webhook simulated alert'
+      details: 'Notificacion simulada de webhook de Prometheus'
     });
     onClose();
   };
@@ -24,15 +24,15 @@ export default function SimulateAlertModal({ isOpen, onClose, onSimulate }) {
     <div className="modal-overlay" id="modal-simulate-alert">
       <div className="modal-content">
         <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-          Simulate Grafana / Prometheus Alert Webhook
+          Simular Webhook de Alerta de Monitoreo
         </h3>
         <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
-          Inject a synthetic alert payload to trigger real-time incident generation and degradation in the telemetry pipeline.
+          Inyecte una carga util sintetica para evaluar la creacion de incidentes y la degradacion automatica de telemetria.
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div className="form-group">
-            <label className="form-label">Alert Name</label>
+            <label className="form-label">Nombre de Alerta</label>
             <input 
               className="form-input" 
               value={alertName} 
@@ -42,7 +42,7 @@ export default function SimulateAlertModal({ isOpen, onClose, onSimulate }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Target Microservice</label>
+            <label className="form-label">Microservicio Afectado</label>
             <select 
               className="form-select" 
               value={serviceId} 
@@ -56,21 +56,21 @@ export default function SimulateAlertModal({ isOpen, onClose, onSimulate }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Severity Level</label>
+            <label className="form-label">Nivel de Severidad</label>
             <select 
               className="form-select" 
               value={severity} 
               onChange={(e) => setSeverity(e.target.value)}
             >
-              <option value="P1">P1 — Critical Outage</option>
-              <option value="P2">P2 — High Degradation</option>
-              <option value="P3">P3 — Medium Warning</option>
-              <option value="P4">P4 — Low Diagnostic</option>
+              <option value="P1">P1 — Interrupcion Critica</option>
+              <option value="P2">P2 — Degradacion Alta</option>
+              <option value="P3">P3 — Advertencia Media</option>
+              <option value="P4">P4 — Diagnostico Bajo</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Summary / Description</label>
+            <label className="form-label">Descripcion del Evento</label>
             <textarea 
               className="form-textarea" 
               rows="3" 
@@ -82,10 +82,10 @@ export default function SimulateAlertModal({ isOpen, onClose, onSimulate }) {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
             <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Cancel
+              Cancelar
             </button>
             <button type="submit" className="btn btn-danger" id="btn-submit-simulate-alert">
-              ⚡ Fire Alert Webhook
+              Emitir Alerta
             </button>
           </div>
         </form>

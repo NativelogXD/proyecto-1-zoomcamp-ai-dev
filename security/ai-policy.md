@@ -1,31 +1,31 @@
-# AI Tool & Data Governance Policy
+# Politica de Gobernanza y Uso Seguro de Herramientas de Inteligencia Artificial
 
-**Project:** CloudOps Commander  
-**Effective Date:** 2026-10-27  
-**Scope:** All developers, AI coding assistants (Antigravity, Claude Code, Cursor, Copilot), and autonomous subagents.
-
----
-
-## 1. Acceptable Use of AI Assistants
-
-1. **Assisted Development, Not Blind Acceptance:**
-   - AI tools may generate code suggestions, tests, documentation, and operational scripts.
-   - Every AI-generated line of code must be reviewed by a human engineer before merging into `main`.
-2. **Context Boundaries:**
-   - Provide only project-relevant files (`AGENTS.md`, `openapi.yaml`, specific modules) to coding agents.
-   - Do not index or provide sensitive user production databases or private encryption keys to LLM contexts.
+Proyecto: Proyecto 1 Zoomcamp AI Dev (CloudOps Commander)  
+Fecha de Entrada en Vigor: 2026-10-27  
+Ambito: Ingenieros de desarrollo, asistentes de programacion (Antigravity, Claude Code, Cursor, Copilot) y subagentes autonomos.
 
 ---
 
-## 2. Secrets & Credential Protection
+## 1. Uso Aceptable de Asistentes de IA
 
-- **Zero Secret Ingestion:** API tokens, database connection passwords, SSH private keys, and cloud credentials must never appear in prompts, context files, or git commits.
-- **Environment Isolation:** Secrets are injected strictly via container environment variables or cloud secret managers (AWS Secrets Manager / Vault), never written into repository files.
+1. **Desarrollo Asistido con Revision Obligatoria:**
+   - Las herramientas de IA pueden generar propuestas de codigo, casos de prueba, documentacion y scripts de operacion.
+   - Cada linea de codigo generada debe ser revisada y validada por un ingeniero antes de incorporarse a la rama principal (`main`).
+2. **Delimitacion Estricta del Contexto:**
+   - Unicamente deben proveerse al contexto de los asistentes los archivos estrictamente requeridos para la tarea (`AGENTS.md`, `openapi.yaml` y modulos especificos).
+   - Queda terminantemente prohibido indexar bases de datos productivas o llaves criptograficas en el contexto de modelos externos.
 
 ---
 
-## 3. Autonomous Agent Guardrails
+## 2. Proteccion de Credenciales y Secretos
 
-1. **Read vs Write Isolation:** Autonomous incident responders may read logs and telemetry freely. However, state-changing remediation actions (such as container restarts or cache flushes) must require confirmation if marked with `requires_confirmation: true`.
-2. **Deterministic Fallbacks:** AI diagnostics must rely on structured, inspectable evidence packets rather than free-form hallucination.
-3. **Audit Trail:** All automated decisions must produce structured logs for post-mortem compliance.
+- **Prohibicion de Ingestion de Secretos:** Llaves de API, contraseñas de bases de datos, llaves privadas SSH y credenciales de proveedores cloud nunca deben incluirse en prompts, archivos de contexto o confirmaciones de control de versiones.
+- **Inyeccion Segura:** Todo secreto debe inyectarse exclusivamente mediante variables de entorno en tiempo de ejecucion o gestores de secretos dedicados, nunca alojarse en el codigo fuente.
+
+---
+
+## 3. Limites para Agentes Autonomos
+
+1. **Aislamiento de Operaciones de Escritura:** Los subagentes autonomos tienen permiso de lectura y analisis de telemetria. Cualquier accion con impacto sobre el estado del sistema requiere confirmacion explicita del operador humano.
+2. **Diagnosticos Deterministas:** Las evaluaciones de diagnostico deben sustentarse en paquetes de evidencia tecnica comprobables (trazas, codigos de error, confirmaciones) y no en suposiciones libres.
+3. **Pistas de Auditoria:** Toda operacion ejecutada debe generar registros estructurados para auditorias posteriores y cumplimiento normativo.

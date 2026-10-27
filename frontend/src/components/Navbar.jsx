@@ -9,18 +9,20 @@ export default function Navbar({ systemStatus, onRefresh }) {
     <nav className="navbar" id="main-navbar">
       <div className="brand">
         <div className="brand-icon">
-          <span>🛡️</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
         </div>
         <div>
           <span>CloudOps Commander</span>
-          <span className="brand-badge">AI SRE 2026</span>
+          <span className="brand-badge">Proyecto 1 AI Dev</span>
         </div>
       </div>
 
       <div className="nav-stats">
         <div className="stat-chip" id="nav-system-status">
           <span className={`stat-dot ${statusColor}`}></span>
-          <span>System: <strong>{systemStatus || 'CHECKING...'}</strong></span>
+          <span>Sistema: <strong>{systemStatus || 'VERIFICANDO...'}</strong></span>
         </div>
 
         <button 
@@ -29,7 +31,7 @@ export default function Navbar({ systemStatus, onRefresh }) {
           onClick={onRefresh}
           style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
         >
-          🔄 Refresh
+          Actualizar
         </button>
       </div>
     </nav>

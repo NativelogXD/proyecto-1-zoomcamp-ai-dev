@@ -15,10 +15,10 @@ describe('MetricSummary Component', () => {
 
     render(<MetricSummary summary={mockSummary} />);
 
-    expect(screen.getByText('Monitored Services')).toBeInTheDocument();
+    expect(screen.getByText('Microservicios Monitoreados')).toBeInTheDocument();
     expect(screen.getByText('4')).toBeInTheDocument();
-    expect(screen.getByText('✓ 3 Healthy')).toBeInTheDocument();
-    expect(screen.getByText('Active Incidents')).toBeInTheDocument();
+    expect(screen.getByText('Estado Optimo: 3')).toBeInTheDocument();
+    expect(screen.getByText('Incidentes Activos')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('15')).toBeInTheDocument();
   });

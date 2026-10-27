@@ -5,10 +5,10 @@ export default function ServiceTopology({ services }) {
     <div className="panel" id="panel-service-topology">
       <div className="panel-header">
         <h2 className="panel-title">
-          <span>🌐</span> Monitored Microservices Topology
+          Topologia de Microservicios
         </h2>
         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          {services.length} registered
+          {services.length} registrados
         </span>
       </div>
 
@@ -27,8 +27,8 @@ export default function ServiceTopology({ services }) {
             </p>
 
             <div className="service-meta">
-              <span>Latency: <strong>{svc.latency_ms}ms</strong></span>
-              <span>Errors: <strong>{(svc.error_rate * 100).toFixed(1)}%</strong></span>
+              <span>Latencia: <strong>{svc.latency_ms}ms</strong></span>
+              <span>Errores: <strong>{(svc.error_rate * 100).toFixed(1)}%</strong></span>
               <span>Uptime: <strong>{svc.uptime_percentage}%</strong></span>
             </div>
           </div>

@@ -1,77 +1,77 @@
-# SRE Operational Runbook & Incident Response Playbook
+# Manual de Operaciones SRE y Procedimientos Estandarizados (Runbooks)
 
-**System:** CloudOps Commander  
-**Target Architecture:** Distributed Microservices Fleet (Order API, Payments, Auth, Inventory)  
-**Maintained by:** Site Reliability Engineering (SRE) Team
+Sistema: CloudOps Commander (Proyecto 1 Zoomcamp AI Dev)  
+Ambito: Flota de Microservicios (Order API, Payments, Auth e Inventory)  
+Responsable: Equipo de Site Reliability Engineering (SRE)
 
 ---
 
-## 🎯 1. Incident Classification Matrix
+## 1. Matriz de Clasificacion de Incidentes
 
-| Severity Level | Response SLA | Triggers | Escalation Path |
+| Nivel de Severidad | SLA de Respuesta | Condiciones de Activacion | Ruta de Escalamiento |
 | :---: | :---: | :--- | :--- |
-| **P1 — Critical** | < 5 min | Service outage, 5xx rate > 5%, payment gateway failure | On-call SRE + Incident Commander |
-| **P2 — High** | < 15 min | p95 latency > 1000ms, non-critical service degraded, pool capacity > 85% | Primary On-Call Engineer |
-| **P3 — Medium** | < 1 hour | Intermittent errors, background queue backlog | Service Squad Lead |
-| **P4 — Low** | Next business day | Minor cosmetic or non-blocking diagnostic warnings | Development Backlog |
+| **P1 — Critico** | < 5 minutos | Caida total del servicio, tasa 5xx > 5%, falla de pagos | Ingeniero de Guardia + Lider Tecnico |
+| **P2 — Alto** | < 15 minutos | Latencia p95 > 1000ms, degradacion de servicio secundario, saturacion de pool > 85% | Ingeniero de Guardia Primario |
+| **P3 — Medio** | < 1 hora | Errores aislados intermitentes, cola de procesamiento retrasada | Equipo de Desarrollo del Servicio |
+| **P4 — Bajo** | Proximo ciclo | Advertencias menores de diagnostico o cosméticas | Pila de Trabajo Regular |
 
 ---
 
-## 🚨 2. Standard Operating Procedures (SOP)
+## 2. Procedimientos Operativos Estandarizados (SOP)
 
-### SOP-01: High 5xx HTTP Error Rate on Order API
-- **Symptoms:** Prometheus alert `HighHttp5xxErrorRate` triggers; Grafana shows spike in HTTP 500 responses on `/api/orders`.
-- **Diagnosis:**
-  1. Inspect error stack trace using `/api/v1/incidents/{id}/investigate` or MCP tool `query_incident_logs`.
-  2. Correlate with recent deployments.
-- **Remediation Action:**
-  - Execute Runbook: `rb-restart-service`
+### SOP-01: Tasa Elevada de Errores HTTP 5xx en Order API
+- **Sintomas:** Alerta de Prometheus `HighHttp5xxErrorRate` activada; Grafana reporta aumento sostenido de respuestas HTTP 500 en `/api/orders`.
+- **Diagnostico:**
+  1. Revisar el paquete de evidencias invocando `/api/v1/incidents/{id}/investigate` o la herramienta MCP `query_incident_logs`.
+  2. Correlacionar con cambios recientes de version.
+- **Accion de Remediacion:**
+  - Ejecutar Runbook: `rb-restart-service`
   ```bash
   curl -X POST http://localhost:8000/api/v1/runbooks/rb-restart-service/execute \
     -H "Content-Type: application/json" \
-    -d '{"incident_id": "<INCIDENT_ID>", "parameters": {"graceful_timeout_sec": 5}}'
+    -d '{"incident_id": "<ID_INCIDENTE>", "parameters": {"graceful_timeout_sec": 5}}'
   ```
-- **Verification:**
-  - Check `/api/v1/services/srv-orders` status: must be `HEALTHY` with error rate < 0.1%.
+- **Verificacion:**
+  - Consultar el estado de `/api/v1/services/srv-orders`: debe retornar `HEALTHY` con tasa de error inferior al 0.1%.
 
 ---
 
-### SOP-02: Connection Pool Exhaustion / Deadlocks
-- **Symptoms:** Database queries timing out; active connection count reaches maximum limit.
-- **Remediation Action:**
-  - Execute Runbook: `rb-flush-cache`
+### SOP-02: Saturacion de Conexiones o Bloqueos en Base de Datos
+- **Sintomas:** Consultas hacia la base de datos exceden el tiempo limite; el numero de conexiones activas alcanza el umbral maximo.
+- **Accion de Remediacion:**
+  - Ejecutar Runbook: `rb-flush-cache`
   ```bash
   curl -X POST http://localhost:8000/api/v1/runbooks/rb-flush-cache/execute \
     -H "Content-Type: application/json" \
-    -d '{"incident_id": "<INCIDENT_ID>", "parameters": {"flush_all": false}}'
+    -d '{"incident_id": "<ID_INCIDENTE>", "parameters": {"flush_all": false}}'
   ```
-- **Verification:**
-  - Connection pool drops below 20% utilization.
+- **Verificacion:**
+  - La ocupacion del pool de conexiones desciende por debajo del 20%.
 
 ---
 
-### SOP-03: Sudden Traffic Spike & High Latency
-- **Symptoms:** p95 latency exceeds 1500ms during flash sales or marketing campaigns.
-- **Remediation Action:**
-  - Execute Runbook: `rb-scale-replicas`
+### SOP-03: Picos Repentinos de Carga y Aumento de Latencia
+- **Sintomas:** La latencia p95 supera los 1500ms durante campanas promocionales o trafico imprevisto.
+- **Accion de Remediacion:**
+  - Ejecutar Runbook: `rb-scale-replicas`
   ```bash
   curl -X POST http://localhost:8000/api/v1/runbooks/rb-scale-replicas/execute \
     -H "Content-Type: application/json" \
-    -d '{"incident_id": "<INCIDENT_ID>", "parameters": {"replicas": 4}}'
+    -d '{"incident_id": "<ID_INCIDENTE>", "parameters": {"replicas": 4}}'
   ```
-- **Verification:**
-  - Service latency normalizes below 50ms.
+- **Verificacion:**
+  - La latencia se normaliza por debajo de 50ms.
 
 ---
 
-### SOP-04: Deployment Regression
-- **Symptoms:** New container release introduces breaking API contract or unexpected exceptions.
-- **Remediation Action:**
-  - Execute Runbook: `rb-rollback-deployment`
+### SOP-04: Regresion por Despliegue de Nueva Version
+- **Sintomas:** Una version recientemente liberada produce incompatibilidades de esquema o excepciones no controladas.
+- **Accion de Remediacion:**
+  - Ejecutar Runbook: `rb-rollback-deployment`
   ```bash
   curl -X POST http://localhost:8000/api/v1/runbooks/rb-rollback-deployment/execute \
     -H "Content-Type: application/json" \
-    -d '{"incident_id": "<INCIDENT_ID>", "parameters": {"target_revision": "previous"}}'
+    -d '{"incident_id": "<ID_INCIDENTE>", "parameters": {"target_revision": "previous"}}'
   ```
-- **Verification:**
-  - Service rolls back to previous stable release tag, smoke tests pass.
+- **Verificacion:**
+  - El servicio revierte a la revision previa estable y las pruebas de humo concluyen con exito.

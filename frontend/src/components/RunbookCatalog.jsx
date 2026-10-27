@@ -5,10 +5,10 @@ export default function RunbookCatalog({ runbooks, selectedIncident, onExecuteRu
     <div className="panel" id="panel-runbooks">
       <div className="panel-header">
         <h2 className="panel-title">
-          <span>📚</span> SRE Operational Runbooks
+          Manuales de Operacion SRE (Runbooks)
         </h2>
         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          {runbooks.length} available
+          {runbooks.length} disponibles
         </span>
       </div>
 
@@ -19,7 +19,7 @@ export default function RunbookCatalog({ runbooks, selectedIncident, onExecuteRu
               <span className="runbook-title">{rb.title}</span>
               <span className="runbook-desc">{rb.description}</span>
               <span style={{ fontSize: '0.7rem', color: '#818cf8', marginTop: '0.2rem' }}>
-                Target: <code>{rb.target_service_id}</code> &bull; Safe Automation
+                Objetivo: <code>{rb.target_service_id}</code> &bull; Automatizacion Segura
               </span>
             </div>
 
@@ -30,7 +30,7 @@ export default function RunbookCatalog({ runbooks, selectedIncident, onExecuteRu
               disabled={!selectedIncident}
               onClick={() => onExecuteRunbook(rb.id, selectedIncident ? selectedIncident.id : 'inc-101')}
             >
-              ▶ Run
+              Ejecutar
             </button>
           </div>
         ))}

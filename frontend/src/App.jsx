@@ -38,7 +38,7 @@ export default function App() {
         setSelectedIncident(incData[0]);
       }
     } catch (err) {
-      console.error('Failed to load dashboard data:', err);
+      console.error('Error al cargar datos del panel:', err);
     }
   };
 
@@ -56,10 +56,10 @@ export default function App() {
     try {
       const result = await api.investigateIncident(incidentId);
       setInvestigation(result);
-      showToast(`AI Investigation complete for ${incidentId}`, 'success');
+      showToast(`Diagnostico por IA completado para el incidente ${incidentId}`, 'success');
       fetchData();
     } catch (err) {
-      showToast(`Investigation failed: ${err.message}`, 'error');
+      showToast(`Fallo en la investigacion: ${err.message}`, 'error');
     } finally {
       setIsInvestigating(false);
     }
@@ -74,11 +74,11 @@ export default function App() {
 
     try {
       const result = await api.executeRunbook(runbookId, incidentId);
-      showToast(`Runbook ${runbookId} executed successfully in ${result.execution_time_ms}ms!`, 'success');
+      showToast(`Procedimiento ${runbookId} ejecutado con exito en ${result.execution_time_ms}ms`, 'success');
       setInvestigation(null);
       await fetchData();
     } catch (err) {
-      showToast(`Runbook execution failed: ${err.message}`, 'error');
+      showToast(`Fallo en la ejecucion del runbook: ${err.message}`, 'error');
     }
   };
 
@@ -86,11 +86,11 @@ export default function App() {
   const handleSimulateAlert = async (payload) => {
     try {
       const created = await api.ingestAlertWebhook(payload);
-      showToast(`Simulated alert '${payload.alert_name}' created incident ${created.id}!`, 'error');
+      showToast(`Alerta simulada '${payload.alert_name}' genero el incidente ${created.id}`, 'error');
       await fetchData();
       setSelectedIncident(created);
     } catch (err) {
-      showToast(`Alert simulation failed: ${err.message}`, 'error');
+      showToast(`Fallo en la simulacion: ${err.message}`, 'error');
     }
   };
 
@@ -127,7 +127,7 @@ export default function App() {
               onClick={() => setNotification(null)}
               style={{ background: 'transparent', border: 'none', color: '#cbd5e1', cursor: 'pointer' }}
             >
-              ✕
+              Cerrar
             </button>
           </div>
         )}
@@ -137,10 +137,10 @@ export default function App() {
         <div className="action-bar">
           <div>
             <h1 style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-              Incident Command & Operations Center
+              Centro de Comando y Operaciones de Incidentes
             </h1>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Real-time telemetry triage, autonomous root-cause analysis, and safe SRE runbook remediation.
+              Triaje de telemetria en tiempo real, diagnostico estructurado de causa raiz y ejecucion controlada de manuales SRE.
             </p>
           </div>
 
@@ -149,7 +149,7 @@ export default function App() {
             id="btn-open-simulate-modal"
             onClick={() => setIsAlertModalOpen(true)}
           >
-            ⚡ Simulate Monitoring Alert
+            Simular Alerta de Monitoreo
           </button>
         </div>
 

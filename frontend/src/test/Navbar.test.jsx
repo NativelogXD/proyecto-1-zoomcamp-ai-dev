@@ -11,7 +11,7 @@ describe('Navbar Component', () => {
     expect(screen.getByText('CloudOps Commander')).toBeInTheDocument();
     expect(screen.getByText('OPERATIONAL')).toBeInTheDocument();
 
-    const refreshBtn = screen.getByRole('button', { name: /refresh/i });
+    const refreshBtn = screen.getByRole('button', { name: /actualizar/i });
     fireEvent.click(refreshBtn);
     expect(onRefresh).toHaveBeenCalledTimes(1);
   });

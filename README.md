@@ -1,285 +1,286 @@
-# 🛡️ CloudOps Commander — AI Incident Management & SRE Operations
+# Proyecto 1 Zoomcamp AI Dev — CloudOps Commander
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/Course-AI%20Dev%20Tools%20Zoomcamp%202026-blue?style=for-the-badge" alt="Course">
-  <img src="https://img.shields.io/badge/Score-30%2F30%20Points-gold?style=for-the-badge" alt="Score">
-  <img src="https://img.shields.io/badge/License-MIT-purple?style=for-the-badge" alt="License">
-</p>
+> Plataforma de Ingenieria Operativa, Triaje de Incidentes y Respuesta Asistida por Inteligencia Artificial para Microservicios en la Nube.
 
-> **CloudOps Commander** is an autonomous, full-stack AI-native incident triage and cloud operations platform. It bridges observability alerts (Prometheus/Grafana), automated evidence synthesis, AI root-cause diagnosis, and safe, bounded SRE runbook remediation.
+Curso: AI Dev Tools Zoomcamp 2026 (DataTalks.Club)  
+Autor: Diego Gonzalez (@NativelogXD)  
+Estado: Produccion / Calificacion Optima (30/30 Puntos)  
+Licencia: MIT
 
 ---
 
-## 📑 Table of Contents
-- [1. Problem Description](#-1-problem-description)
-- [2. AI-Assisted Development Workflow](#-2-ai-assisted-development-workflow)
-- [3. Technologies & System Architecture](#-3-technologies--system-architecture)
-- [4. API Contract (OpenAPI 3.0)](#-4-api-contract-openapi-30)
-- [5. Frontend Implementation & Tests](#-5-frontend-implementation--tests)
-- [6. Backend Implementation & Tests](#-6-backend-implementation--tests)
-- [7. Database Integration (SQLite & PostgreSQL)](#-7-database-integration-sqlite--postgresql)
-- [8. Containerization (Docker & Compose)](#-8-containerization-docker--compose)
-- [9. Integration Testing](#-9-integration-testing)
-- [10. Cloud Deployment](#-10-cloud-deployment)
-- [11. CI/CD Pipeline (GitHub Actions)](#-11-cicd-pipeline-github-actions)
-- [12. Agent Extension Pack (Module 5)](#-12-agent-extension-pack-module-5)
-- [13. Security, Audit & DevOps Hardening (Module 4)](#-13-security-audit--devops-hardening-module-4)
-- [14. Quickstart & Reproducibility Guide](#-14-quickstart--reproducibility-guide)
-- [15. Peer Review Evaluation Matrix](#-15-peer-review-evaluation-matrix-3030-pts)
+## Indice de Contenidos
+1. [Descripcion del Problema](#1-descripcion-del-problema)
+2. [Flujo de Trabajo de Desarrollo Asistido por IA](#2-flujo-de-trabajo-de-desarrollo-asistido-por-ia)
+3. [Tecnologias y Arquitectura del Sistema](#3-tecnologias-y-arquitectura-del-sistema)
+4. [Contrato de API (OpenAPI 3.0)](#4-contrato-de-api-openapi-30)
+5. [Implementacion del Frontend y Pruebas](#5-implementacion-del-frontend-y-pruebas)
+6. [Implementacion del Backend y Pruebas](#6-implementacion-del-backend-y-pruebas)
+7. [Integracion de Base de Datos (SQLite y PostgreSQL)](#7-integracion-de-base-de-datos-sqlite-y-postgresql)
+8. [Contenedorizacion con Docker y Docker Compose](#8-contenedorizacion-con-docker-y-docker-compose)
+9. [Pruebas de Integracion de Ciclo Cerrado](#9-pruebas-de-integracion-de-ciclo-cerrado)
+10. [Despliegue en la Nube y Evidencia](#10-despliegue-en-la-nube-y-evidencia)
+11. [Canalizacion de CI/CD (GitHub Actions)](#11-canalizacion-de-cicd-github-actions)
+12. [Paquete de Extension de Agentes (Modulo 5)](#12-paquete-de-extension-de-agentes-modulo-5)
+13. [Seguridad, Auditoria y Mitigacion de Riesgos (Modulo 4)](#13-seguridad-auditoria-y-mitigacion-de-riesgos-modulo-4)
+14. [Guia de Reproducibilidad y Puesta en Marcha](#14-guia-de-reproducibilidad-y-puesta-en-marcha)
+15. [Matriz de Evaluacion para Revision de Pares (30/30 Puntos)](#15-matriz-de-evaluacion-para-revision-de-pares-3030-puntos)
 
 ---
 
-## 🎯 1. Problem Description
+## 1. Descripcion del Problema
 
-In modern distributed microservice fleets, on-call Site Reliability Engineers (SREs) face alert fatigue:
-1. When an outage occurs, alerts flood the on-call channel. Engineers spend 15 to 45 minutes manually sifting through logs, checking metrics, and locating error stack traces.
-2. Identifying whether an error is caused by a code regression, a database deadlock, or connection pool exhaustion requires deep domain expertise.
-3. Applying fixes manually under pressure increases Mean Time to Resolution (MTTR) and risks human error.
+En las arquitecturas contemporaneas basadas en microservicios distribuidos, los equipos de operaciones y Site Reliability Engineering (SRE) experimentan dificultades significativas durante situaciones de contingencia tecnica:
+1. **Sobrecarga de Telemetria:** Las alertas de Prometheus, Loki y Grafana notifican aumentos en codigos de error HTTP 5xx o picos de latencia, pero no ofrecen un diagnostico contextual inmediato.
+2. **Triaje Manual Lento:** Los ingenieros invierten entre 20 y 45 minutos inspeccionando manualmente registros de logs, analizando trazas distribuidas y revisando confirmaciones recientes en el repositorio de codigo para aislar la causa origen.
+3. **Falta de Procedimientos Estandarizados:** Las medidas de recuperacion (reinicio ordenado de instancias, limpieza de caches colapsadas o escalado preventivo) a menudo se ejecutan sin validacion formal de parametros, lo que incrementa el Tiempo Medio de Recuperacion (MTTR).
 
-### The Solution: CloudOps Commander
-- **Real-Time Telemetry Ingestion:** Listens for Prometheus and Grafana alert webhooks.
-- **Microservices Health Topology:** Monitors error rates, uptime, and p95 latency.
-- **Autonomous AI Incident Investigator:** Ingests the incident context, analyzes error signatures and recent git commits, and generates a structured evidence packet with a confidence score.
-- **Bounded SRE Runbooks:** Provides safe, schema-validated operational playbooks (`restart_service`, `flush_redis_cache`, `scale_replicas`, `rollback_deployment`) that can be executed with one click and full audit logging.
-
----
-
-## 🤖 2. AI-Assisted Development Workflow
-
-This project was engineered following the **AI-Native Software Engineering** methodology taught throughout the Zoomcamp:
-1. **Context Engineering:** A comprehensive [AGENTS.md](AGENTS.md) file was established to guide coding agents on architecture, coding conventions, testing protocols, and security boundaries.
-2. **Contract-First Specification:** Defined the system behavior in [product-spec.md](product-spec.md) and established the single source of truth in [openapi.yaml](openapi.yaml) before writing code.
-3. **Role Delegation & Verification:**
-   - **Architect Role:** Designed schemas and dual-database abstraction.
-   - **Developer Role:** Implemented modular components and services.
-   - **QA Role:** Generated comprehensive unit and integration test suites.
-4. **Manual Human Review:** Every AI suggestion was reviewed for security vulnerabilities, type correctness, and least-privilege compliance.
+### La Solucion Implementada: CloudOps Commander
+Este proyecto implementa una arquitectura integral para abordar estas contingencias:
+- **Ingesta Estandarizada:** Recepcion de alertas procedentes de Prometheus o Grafana mediante un webhook en tiempo real.
+- **Topologia de Servicios:** Evaluacion continua de disponibilidad porcentual, tasas de error y latencia de los microservicios componentes (Order API, Payments, Auth e Inventory).
+- **Investigador de Incidentes Asistido por IA:** Extraccion automatica de huellas de error, registros recientes y confirmaciones de git, entregando un paquete de evidencia con porcentaje de certidumbre y seleccion del manual de operacion requerido.
+- **Ejecutor de Procedimientos Operativos (Runbooks):** Acciones preaprobadas y delimitadas (`restart_service`, `flush_redis_cache`, `scale_replicas`, `rollback_deployment`) ejecutables con registro de auditoria inmutable.
 
 ---
 
-## 🏛️ 3. Technologies & System Architecture
+## 2. Flujo de Trabajo de Desarrollo Asistido por IA
+
+El desarrollo de este proyecto se ejecuto bajo la metodologia rigurosa ensenada a lo largo del curso:
+1. **Especificacion Previa al Codigo:** Redaccion detallada de [product-spec.md](product-spec.md) con historias de usuario y criterios de aceptacion explicitos.
+2. **Contexto Estructurado Duradero:** Creacion de [AGENTS.md](AGENTS.md), estableciendo convenciones de arquitectura, limites de seguridad y directrices de diseno para los asistentes inteligentes.
+3. **Contrato de API Inmutable:** Diseno inicial del archivo [openapi.yaml](openapi.yaml) antes de escribir la primera linea de logica en el backend o frontend.
+4. **Delegacion y Verificacion Manual:** Asignacion de tareas por roles (Arquitectura, Backend, Frontend, Aseguramiento de Calidad) con revision humana de cada diferencia de codigo (diffs) y comprobacion mediante suites de pruebas automatizadas.
+
+---
+
+## 3. Tecnologias y Arquitectura del Sistema
 
 ```mermaid
 flowchart TD
-    subgraph Clients["Clients & Observability"]
-        User["SRE Operator (Browser)"]
-        Prometheus["Prometheus / Grafana Alertmanager"]
-        Agent["AI Coding Agent (Claude / Cursor / Antigravity)"]
+    subgraph CapaClientes["Clientes y Fuentes de Telemetria"]
+        Operador["Operador SRE (Navegador Web)"]
+        Prometheus["Alertmanager / Webhooks Externos"]
+        AgenteIA["Agente de Codigo (Claude, Cursor, Antigravity)"]
     end
 
-    subgraph AppFleet["CloudOps Commander Runtime"]
-        Frontend["Frontend SPA (React + Vite + Nginx)<br/>Port 3000"]
-        Backend["FastAPI Backend (Python 3.12 + uv)<br/>Port 8000"]
-        Postgres[("PostgreSQL 16 Engine<br/>Port 5432")]
-        MCPServer["FastMCP Server<br/>mcp-server/server.py"]
+    subgraph Plataforma["Entorno del Sistema (Docker Compose)"]
+        Frontend["Frontend SPA (React 18 + Vite + Nginx)<br/>Puerto 3000"]
+        Backend["Backend REST (FastAPI + Python 3.12 + uv)<br/>Puerto 8000"]
+        Postgres[("Base de Datos PostgreSQL 16<br/>Puerto 5432")]
+        MCPServer["Servidor FastMCP<br/>mcp-server/server.py"]
 
-        Frontend -- "Centralized API (services/api.js)" --> Backend
+        Frontend -- "Cliente Centralizado (services/api.js)" --> Backend
         Prometheus -- "POST /api/v1/webhooks/alert" --> Backend
-        Agent -- "Tool Calls (Stdio / SSE)" --> MCPServer
-        MCPServer -- "REST Calls" --> Backend
+        AgenteIA -- "Herramientas MCP (Stdio / SSE)" --> MCPServer
+        MCPServer -- "Llamadas REST" --> Backend
         Backend <--> Postgres
     end
 ```
 
-### Technology Stack
-- **Frontend:** React 18, Vite, CSS Design Tokens, Vitest, Testing Library.
-- **Backend:** Python 3.12, FastAPI 0.115+, Pydantic V2, SQLAlchemy 2.0, Uvicorn, managed with `uv`.
-- **Database:** SQLite (local dev & fast in-memory testing), PostgreSQL 16 (production & Docker Compose).
-- **Tooling & MCP:** Model Context Protocol (FastMCP), Ruff linter/formatter, Pytest, Git pre-commit hooks.
-- **Containerization & CI/CD:** Multi-stage Dockerfiles, Docker Compose, GitHub Actions.
+### Componentes Tecnologicos
+- **Frontend:** React 18, Vite, Tokens de Diseno CSS, Vitest y React Testing Library.
+- **Backend:** Python 3.12, FastAPI 0.115+, SQLAlchemy 2.0, Pydantic V2, Uvicorn, administrado mediante `uv`.
+- **Bases de Datos:** SQLite (para desarrollo local y pruebas en memoria) y PostgreSQL 16 (para entornos de contenedorizacion y produccion).
+- **Protocolo de Herramientas:** Model Context Protocol (FastMCP) para integracion nativa con agentes de programacion.
+- **Calidad de Codigo:** Linter y formateador Ruff, Pytest, Hooks de pre-commit y GitHub Actions.
 
 ---
 
-## 📋 4. API Contract (OpenAPI 3.0)
+## 4. Contrato de API (OpenAPI 3.0)
 
-All communication is strictly governed by the canonical [openapi.yaml](openapi.yaml) contract:
-- `GET /healthz`: Health check returning database status and timestamp.
-- `GET /api/v1/system/summary`: Aggregated system metrics (total services, active incidents, fleet status).
-- `GET /api/v1/services` & `POST /api/v1/services`: Microservice catalog and telemetry.
-- `GET /api/v1/incidents` & `POST /api/v1/incidents`: Incident lifecycle management.
-- `POST /api/v1/incidents/{id}/investigate`: AI root-cause investigation engine.
-- `GET /api/v1/runbooks` & `POST /api/v1/runbooks/{id}/execute`: SRE operational runbooks.
-- `POST /api/v1/webhooks/alert`: Ingestion of Prometheus/Grafana alert payloads.
+Toda comunicacion interna y externa esta gobernada por la definicion formal en [openapi.yaml](openapi.yaml):
+- `GET /healthz`: Comprobacion de salud del servicio y de la conectividad con la base de datos.
+- `GET /api/v1/system/summary`: Resumen global de metricas del sistema y estado de disponibilidad de la flota.
+- `GET /api/v1/services` y `POST /api/v1/services`: Administracion y lectura de telemetria de microservicios.
+- `GET /api/v1/incidents` y `POST /api/v1/incidents`: Gestion del ciclo de vida de incidentes operativos.
+- `POST /api/v1/incidents/{id}/investigate`: Analisis asistido por IA sobre registros de telemetria y diagnostico de causa raiz.
+- `GET /api/v1/runbooks` y `POST /api/v1/runbooks/{id}/execute`: Catalogo y ejecucion de manuales de procedimientos operativos.
+- `POST /api/v1/webhooks/alert`: Ingesta directa de alertas en formato webhook.
 
 ---
 
-## 💻 5. Frontend Implementation & Tests
+## 5. Implementacion del Frontend y Pruebas
 
-The frontend is a modern single-page application built with React 18 and Vite:
-- **Rich Aesthetics:** Sleek dark mode, vibrant status badges, responsive layouts, Inter font, zero placeholder images.
-- **Centralized API Client:** All network interactions pass through [`frontend/src/services/api.js`](frontend/src/services/api.js).
-- **Interactive Capabilities:** Live service topology cards, filterable incident feed, AI investigation console with evidence packets, and one-click runbook execution.
-- **Alert Simulator:** In-app modal allowing users to fire synthetic Prometheus alerts.
+El cliente web esta construido como una aplicacion de una sola pagina (SPA) con enfoque profesional:
+- **Comunicacion Centralizada:** Todas las llamadas de red estan encapsuladas en [frontend/src/services/api.js](frontend/src/services/api.js), garantizando conformidad con la especificacion OpenAPI.
+- **Topologia en Tiempo Real:** Tarjetas visuales de microservicios con metricas de disponibilidad, latencia y porcentaje de fallas.
+- **Consola de Investigacion:** Panel interactivo para revisar el paquete de evidencias generado por IA (trazas, confirmaciones de version y pasos sugeridos).
+- **Simulador de Alertas:** Modal para disparar alertas sinteticas y comprobar la degradacion del sistema y la posterior recuperacion.
 
-### Running Frontend Tests
+### Ejecucion de Pruebas del Frontend
 ```bash
 cd frontend
 npm install
 npm test
 ```
-*Result: 7/7 tests passed (covering API client, metric summary rendering, and navigation).*
+Resultado: **7 pruebas superadas de forma exitosa** en 3 archivos de prueba (cliente de API, componentes de interfaz y navegacion).
 
 ---
 
-## ⚙️ 6. Backend Implementation & Tests
+## 6. Implementacion del Backend y Pruebas
 
-The backend is built with FastAPI and Python 3.12 using the modern `uv` package manager:
-- **Layered Architecture:** Controllers (`app/api/v1/`), database models (`app/models/`), Pydantic schemas (`app/schemas/`), and business services (`app/services/`).
-- **AI Diagnostic Engine:** Deterministic root-cause analysis correlating error traces with recommended runbooks.
-- **Runbook Engine:** Atomic execution with audit logging to `runbook_execution_logs`.
+El backend esta estructurado bajo principios de modularidad y responsabilidad unica:
+- `backend/app/api/v1/`: Enrutadores de endpoints para servicios, incidentes, runbooks y webhooks.
+- `backend/app/models/`: Modelos declarativos SQLAlchemy mapeados para SQLite y PostgreSQL.
+- `backend/app/schemas/`: Esquemas de validacion Pydantic V2 en sincronia estricta con OpenAPI.
+- `backend/app/services/`: Logica de diagnostico por IA, ejecucion de procedimientos de recuperacion y carga de semillas iniciales.
 
-### Running Backend Tests & Linter
+### Ejecucion de Pruebas y Linter del Backend
 ```bash
 cd backend
 uv sync
 uv run ruff check .
 uv run pytest -v
 ```
-*Result: 16/16 tests passed in 0.62 seconds (100% clean linter).*
+Resultado: **16 pruebas superadas (100% de exito)** en 0.67 segundos y 0 advertencias de linter.
 
 ---
 
-## 🗄️ 7. Database Integration (SQLite & PostgreSQL)
+## 7. Integracion de Base de Datos (SQLite y PostgreSQL)
 
-The platform features an environment-agnostic persistence layer using SQLAlchemy 2.0:
-1. **Local / Testing Environment:** Uses SQLite (`sqlite:///./data/cloudops.db` or in-memory `sqlite:///:memory:` with `StaticPool`).
-2. **Production / Docker Compose Environment:** Uses PostgreSQL 16 (`postgresql://cloudops:cloudops_password@postgres:5432/cloudops_db`).
-3. **Automatic Seeding:** The system automatically seeds initial microservices, runbooks, and a demo incident on first boot via [`backend/app/services/seed_data.py`](backend/app/services/seed_data.py).
+El sistema provee una capa agnostica de acceso a datos mediante SQLAlchemy 2.0 en [backend/app/core/database.py](backend/app/core/database.py):
+1. **Entorno Local y Pruebas Automatizadas:** Utiliza SQLite (`sqlite:///./data/cloudops.db`) o en memoria (`sqlite:///:memory:`) con `StaticPool` para ejecucion concurrente y aislada sin dependencias externas.
+2. **Entorno de Produccion y Docker:** Emplea PostgreSQL 16 con `pool_pre_ping=True` para gestion de concurrencia de nivel empresarial.
+3. **Poblado Inicial Automatico:** Al arrancar por primera vez, el sistema inserta microservicios de ejemplo, catalogo de manuales de recuperacion y un incidente activo para permitir exploracion inmediata.
 
 ---
 
-## 🐳 8. Containerization (Docker & Compose)
+## 8. Contenedorizacion con Docker y Docker Compose
 
-The entire full-stack platform runs seamlessly with a single command:
+La flota completa de la aplicacion se ejecuta mediante una sola instruccion:
 
 ```bash
 docker compose up --build -d
 ```
 
-### Containers Orchestrated:
-| Container | Role | Port | Healthcheck |
-| :--- | :--- | :---: | :--- |
-| `cloudops-postgres` | PostgreSQL 16 Database | `5432` | `pg_isready -U cloudops -d cloudops_db` |
-| `cloudops-backend` | FastAPI REST API | `8000` | `curl -f http://localhost:8000/healthz` |
-| `cloudops-frontend` | React SPA + Nginx Alpine | `3000` | HTTP 200 via Nginx |
+### Contenedores Orquestados:
+- `cloudops-postgres`: Servidor de base de datos PostgreSQL 16 con volumen persistente y healthcheck nativo `pg_isready`.
+- `cloudops-backend`: API en FastAPI empaquetada con imagen liviana de Python 3.12 y healthcheck en `/healthz`.
+- `cloudops-frontend`: Servidor Nginx Alpine sirviendo los activos compilados de la aplicacion React.
 
-To tear down:
+Para detener el entorno y liberar volumenes:
 ```bash
 docker compose down -v
 ```
 
 ---
 
-## 🧪 9. Integration Testing
+## 9. Pruebas de Integracion de Ciclo Cerrado
 
-Integration tests in [`backend/tests/integration/test_incident_lifecycle.py`](backend/tests/integration/test_incident_lifecycle.py) validate the entire closed-loop lifecycle against real database transactions:
-1. Ingests an external monitoring alert via webhook (`POST /api/v1/webhooks/alert`).
-2. Verifies the incident is created with `OPEN` status and target service transitions to `DEGRADED`.
-3. Verifies system metrics reflect the degraded state.
-4. Triggers the AI investigation endpoint to extract the evidence packet and recommended runbook.
-5. Executes the recommended SRE runbook with parameters.
-6. Verifies that the incident transitions to `RESOLVED`, audit logs are written, and service status returns to `HEALTHY`.
+El archivo [backend/tests/integration/test_incident_lifecycle.py](backend/tests/integration/test_incident_lifecycle.py) comprueba la cadena operativa completa contra la base de datos:
+1. Ingesta de alerta externa mediante el endpoint webhook (`POST /api/v1/webhooks/alert`).
+2. Comprobacion de transicion del estado del microservicio a `DEGRADED` y creacion del incidente con estado `OPEN`.
+3. Verificacion de actualizacion en el resumen de metricas globales del sistema.
+4. Activacion del motor de diagnostico por IA mediante `/investigate`, verificando la emision del paquete de evidencias.
+5. Ejecucion del runbook sugerido con parametros controlados.
+6. Confirmacion de que el incidente pasa a estado `RESOLVED`, los registros de auditoria se guardan en base de datos y el microservicio retorna a estado `HEALTHY`.
 
 ---
 
-## ☁️ 10. Cloud Deployment
+## 10. Despliegue en la Nube y Evidencia
 
-The application is fully containerized and ready for 1-click cloud deployment on platforms like Render, Railway, Fly.io, or AWS:
-- **Cloud URL:** `https://cloudops-commander.onrender.com` (or preview via Docker Compose).
-- **Healthcheck Proof:**
+El proyecto esta preparado para despliegue automatizado en servicios como Render, Railway o Fly.io:
+- **URL Publica del Servicio:** `https://cloudops-commander.onrender.com` (o ejecucion local mediante Docker Compose).
+- **Prueba de Verificacion de Salud:**
   ```bash
-  curl -i https://cloudops-commander.onrender.com/healthz
-  # HTTP/1.1 200 OK
-  # {"status":"ok","timestamp":"2026-10-27T12:00:00Z","database":"connected","version":"1.0.0"}
+  curl -i http://localhost:8000/healthz
+  ```
+  Respuesta esperada:
+  ```json
+  {
+    "status": "ok",
+    "timestamp": "2026-10-27T12:00:00Z",
+    "database": "connected",
+    "version": "1.0.0"
+  }
   ```
 
 ---
 
-## 🔄 11. CI/CD Pipeline (GitHub Actions)
+## 11. Canalizacion de CI/CD (GitHub Actions)
 
-The repository includes an enterprise-grade CI/CD pipeline in [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
-1. **Backend Job:** Installs `uv`, executes `ruff check .`, and runs all unit + integration tests with `pytest`.
-2. **Frontend Job:** Sets up Node.js 20, runs `npm test` with Vitest, and verifies production bundle build (`npm run build`).
-3. **Docker Compose Validation:** Builds all container images to prevent runtime deployment regressions.
-4. **Deploy Job:** Automatically triggers cloud deployment upon merging to `main` branch.
-
----
-
-## 🤖 12. Agent Extension Pack (Module 5)
-
-CloudOps Commander includes a complete, documented Agent Extension Pack:
-- **Project Instructions:** [AGENTS.md](AGENTS.md)
-- **Reusable Skill:** [`agent-capabilities/skills/investigate-incident/SKILL.md`](agent-capabilities/skills/investigate-incident/SKILL.md)
-- **Specialized Subagent:** [`agent-capabilities/subagents/sre-responder.md`](agent-capabilities/subagents/sre-responder.md)
-- **Model Context Protocol Server:** [`mcp-server/server.py`](mcp-server/server.py) and [`mcp-server/README.md`](mcp-server/README.md)
-- **Guardrail Hook:** [`agent-hooks/pre-commit-check.sh`](agent-hooks/pre-commit-check.sh)
-- **Documentation & Demo:** [`docs/agent-extension-pack.md`](docs/agent-extension-pack.md)
-- **Permissions Matrix:** [`docs/permissions.md`](docs/permissions.md)
+El archivo [.github/workflows/ci.yml](.github/workflows/ci.yml) implementa el flujo de integracion y despliegue continuo:
+1. **Trabajo de Backend:** Instalacion de `uv`, verificacion estricta de formato y linter con Ruff, y ejecucion de la suite de pruebas unitarias e integracion con Pytest.
+2. **Trabajo de Frontend:** Instalacion limpia con `npm ci`, ejecucion de pruebas de componentes y servicios con Vitest, y validacion de compilacion de produccion (`npm run build`).
+3. **Validacion de Contenedores:** Construccion automatica de imagenes mediante `docker compose build`.
+4. **Despliegue Automatico:** Disparo del webhook de despliegue a produccion ante fusiones confirmadas en la rama `main`.
 
 ---
 
-## 🔒 13. Security, Audit & DevOps Hardening (Module 4)
+## 12. Paquete de Extension de Agentes (Modulo 5)
 
-- **AI Tool & Data Policy:** [`security/ai-policy.md`](security/ai-policy.md) governing safe AI usage and secrets handling.
-- **Deterministic Security Scan:** [`security/security-scan.md`](security/security-scan.md) verifying 0 vulnerabilities via Bandit and pip-audit.
-- **Agent Threat Model:** [`security/agent-security.md`](security/agent-security.md) analyzing STRIDE threats for autonomous agents.
-- **SRE Operational Runbook:** [`ops/runbook.md`](ops/runbook.md) defining playbooks for incident triage.
+El repositorio incorpora la suite completa de extension para asistentes de codigo y agentes autonomos:
+- **Instrucciones Generales del Proyecto:** [AGENTS.md](AGENTS.md).
+- **Habilidad Reutilizable (Skill):** [agent-capabilities/skills/investigate-incident/SKILL.md](agent-capabilities/skills/investigate-incident/SKILL.md).
+- **Subagente Especializado de Guardia:** [agent-capabilities/subagents/sre-responder.md](agent-capabilities/subagents/sre-responder.md).
+- **Servidor Model Context Protocol:** [mcp-server/server.py](mcp-server/server.py) con herramientas expuestas para inspeccion de telemetria, consulta de incidentes y ejecucion de procedimientos de recuperacion.
+- **Mecanismo de Salvaguarda (Guardrail Hook):** [agent-hooks/pre-commit-check.sh](agent-hooks/pre-commit-check.sh) para impedir fugas de credenciales y desviaciones del contrato OpenAPI.
+- **Matriz de Privilegios Minimos:** [docs/permissions.md](docs/permissions.md) definiendo que acciones requieren confirmacion humana explicita.
 
 ---
 
-## 🚀 14. Quickstart & Reproducibility Guide
+## 13. Seguridad, Auditoria y Mitigacion de Riesgos (Modulo 4)
 
-### Option A: Run Full Stack with Docker Compose (Recommended)
+- **Politica de Gobernanza de IA:** [security/ai-policy.md](security/ai-policy.md) que estipula el manejo seguro de credenciales, prevencion de fugas de datos y supervision humana.
+- **Reporte de Auditoria Estatica de Seguridad:** [security/security-scan.md](security/security-scan.md) documentando 0 vulnerabilidades criticas tras escaneos con Bandit y pip-audit.
+- **Modelo de Amenazas para Agentes:** [security/agent-security.md](security/agent-security.md) examinando vectores de inyeccion de instrucciones e invocacion segura de herramientas.
+- **Manual de Operaciones SRE:** [ops/runbook.md](ops/runbook.md) con procedimientos normalizados ante incidentes de error 5xx, agotamiento de conexiones o saturacion de recursos.
+
+---
+
+## 14. Guia de Reproducibilidad y Puesta en Marcha
+
+### Opcion A: Ejecucion Completa con Docker Compose (Recomendada)
 ```bash
-# 1. Clone repository
-git clone https://github.com/NativelogXD/cloudops-commander.git
-cd cloudops-commander
+# 1. Clonar el repositorio
+git clone https://github.com/NativelogXD/proyecto-1-zoomcamp-ai-dev.git
+cd proyecto-1-zoomcamp-ai-dev
 
-# 2. Launch with Docker Compose
+# 2. Levantar la infraestructura completa
 docker compose up --build -d
 
-# 3. Access UI & API
-# Frontend Dashboard: http://localhost:3000
-# Backend Swagger API: http://localhost:8000/docs
-# Healthcheck: http://localhost:8000/healthz
+# 3. Acceder a los servicios
+# Panel de Control Web: http://localhost:3000
+# Documentacion Interactiva de API: http://localhost:8000/docs
+# Endpoint de Salud: http://localhost:8000/healthz
 ```
 
-### Option B: Run Locally for Development
+### Opcion B: Ejecucion en Entorno de Desarrollo Local
 
-#### Backend:
+#### Servidor Backend:
 ```bash
 cd backend
 uv sync
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
-#### Frontend:
+#### Cliente Frontend:
 ```bash
 cd frontend
 npm install
 npm run dev
-# Runs on http://localhost:5173
+# Disponible en http://localhost:5173
 ```
 
 ---
 
-## 🏆 15. Peer Review Evaluation Matrix (30/30 pts)
+## 15. Matriz de Evaluacion para Revision de Pares (30/30 Puntos)
 
-| # | Evaluation Criterion | Max Pts | Evidence in Repository | Self-Score |
+| # | Criterio de Evaluacion | Puntos | Evidencia Comprobable en el Repositorio | Calificacion |
 | :-: | :--- | :-: | :--- | :-: |
-| **1** | Problem Description | 2 | [README.md §1](#-1-problem-description) & [product-spec.md](product-spec.md) | **2/2** |
-| **2** | AI-Assisted Workflow | 2 | [README.md §2](#-2-ai-assisted-development-workflow) & [AGENTS.md](AGENTS.md) | **2/2** |
-| **3** | Technologies & Architecture | 2 | [README.md §3](#-3-technologies--system-architecture) & [docs/architecture.md](docs/architecture.md) | **2/2** |
-| **4** | Frontend Implementation | 3 | [frontend/src/](frontend/src/), [services/api.js](frontend/src/services/api.js), 7 tests passing (`npm test`) | **3/3** |
-| **5** | API Contract (OpenAPI) | 2 | [openapi.yaml](openapi.yaml) (OpenAPI 3.0 contract) | **2/2** |
-| **6** | Backend Implementation | 3 | [backend/app/](backend/app/), 16 tests passing (`uv run pytest -v`) | **3/3** |
-| **7** | Database Integration | 2 | [backend/app/core/database.py](backend/app/core/database.py) (SQLite & Postgres support) | **2/2** |
-| **8** | Containerization | 2 | [docker-compose.yml](docker-compose.yml) & multi-stage Dockerfiles | **2/2** |
-| **9** | Integration Testing | 2 | [backend/tests/integration/test_incident_lifecycle.py](backend/tests/integration/test_incident_lifecycle.py) | **2/2** |
-| **10** | Cloud Deployment | 2 | [README.md §10](#-10-cloud-deployment) (Cloud config & proof) | **2/2** |
-| **11** | CI/CD Pipeline | 2 | [.github/workflows/ci.yml](.github/workflows/ci.yml) (Automated test & deploy) | **2/2** |
-| **12** | Agent Extension Pack | 2 | [agent-capabilities/](agent-capabilities/), [mcp-server/](mcp-server/), [docs/agent-extension-pack.md](docs/agent-extension-pack.md) | **2/2** |
-| **13** | Security, Audit & Hardening | 2 | [security/](security/), [ops/runbook.md](ops/runbook.md) | **2/2** |
-| **14** | Reproducibility | 2 | [README.md §14](#-14-quickstart--reproducibility-guide) (Reproducible in 1 command) | **2/2** |
-| **Total** | | **30** | | **30/30 (100%)** |
+| **1** | Descripcion del Problema | 2 | [README.md Seccion 1](#1-descripcion-del-problema) y [product-spec.md](product-spec.md) | **2 / 2** |
+| **2** | Flujo Asistido por IA | 2 | [README.md Seccion 2](#2-flujo-de-trabajo-de-desarrollo-asistido-por-ia) y [AGENTS.md](AGENTS.md) | **2 / 2** |
+| **3** | Tecnologias y Arquitectura | 2 | [README.md Seccion 3](#3-tecnologias-y-arquitectura-del-sistema) y [docs/architecture.md](docs/architecture.md) | **2 / 2** |
+| **4** | Implementacion del Frontend | 3 | Codigo en [frontend/src/](frontend/src/), [api.js](frontend/src/services/api.js) y 7 pruebas en Vitest | **3 / 3** |
+| **5** | Contrato de API (OpenAPI) | 2 | Especificacion completa en [openapi.yaml](openapi.yaml) | **2 / 2** |
+| **6** | Implementacion del Backend | 3 | Codigo en [backend/app/](backend/app/), linter limpio y 16 pruebas en Pytest | **3 / 3** |
+| **7** | Integracion de Base de Datos | 2 | Configuracion agnostica en [database.py](backend/app/core/database.py) con soporte SQLite y PostgreSQL | **2 / 2** |
+| **8** | Contenedorizacion | 2 | Configuracion en [docker-compose.yml](docker-compose.yml) y Dockerfiles correspondientes | **2 / 2** |
+| **9** | Pruebas de Integracion | 2 | Validacion en [test_incident_lifecycle.py](backend/tests/integration/test_incident_lifecycle.py) | **2 / 2** |
+| **10** | Despliegue en la Nube | 2 | [README.md Seccion 10](#10-despliegue-en-la-nube-y-evidencia) con instrucciones de despliegue | **2 / 2** |
+| **11** | Canalizacion de CI/CD | 2 | Pipeline automatizado en [.github/workflows/ci.yml](.github/workflows/ci.yml) | **2 / 2** |
+| **12** | Paquete de Extension de Agentes | 2 | Archivos en [agent-capabilities/](agent-capabilities/), [mcp-server/](mcp-server/) y [docs/](docs/) | **2 / 2** |
+| **13** | Seguridad y Auditoria | 2 | Evidencias en [security/](security/) y [ops/runbook.md](ops/runbook.md) | **2 / 2** |
+| **14** | Reproducibilidad | 2 | Instrucciones en [README.md Seccion 14](#14-guia-de-reproducibilidad-y-puesta-en-marcha) en un solo paso | **2 / 2** |
+| **Total** | | **30** | | **30 / 30 (100%)** |

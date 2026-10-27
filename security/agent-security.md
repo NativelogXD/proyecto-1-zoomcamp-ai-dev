@@ -1,25 +1,25 @@
-# Agent & MCP Threat Model & Security Architecture
+# Modelo de Amenazas de Agentes e Integracion Segura de Herramientas MCP
 
-This document analyzes the threat vectors specific to AI developer tools, autonomous coding subagents, and Model Context Protocol (MCP) servers.
+Este documento analiza los vectores de riesgo asociados a herramientas de desarrollo asistidas por IA, subagentes autonomos y servidores Model Context Protocol (MCP).
 
 ---
 
-## 🎯 1. Threat Modeling (STRIDE Analysis)
+## 1. Modelado de Amenazas (Analisis STRIDE)
 
-| Threat Category | Potential Attack Vector | CloudOps Commander Mitigation |
+| Categoria de Amenaza | Vector Potencial | Mitigacion en CloudOps Commander |
 | :--- | :--- | :--- |
-| **Spoofing** | Unauthorized agent masquerading as an SRE responder. | Webhook requests require shared secret header validation; MCP tools require local stdio or token authentication. |
-| **Tampering** | LLM hallucinations generating destructive parameters (e.g. `rm -rf /`). | Runbooks reject arbitrary shell commands. Only pre-defined, schema-validated parameters are permitted. |
-| **Repudiation** | Action executed without traceability. | Every invocation is recorded to `runbook_execution_logs` with caller context and UTC timestamp. |
-| **Information Disclosure** | Agent leaking production database credentials into chat logs. | `agent-hooks/pre-commit-check.sh` blocks secret leaks. Credentials only exist in environment variables. |
-| **Denial of Service** | Agent spawning an infinite loop of runbook restarts. | Rate-limiting on `/investigate` and `/execute` endpoints; debouncing on webhook ingestion. |
-| **Elevation of Privilege** | Read-only agent attempting database drops. | Database user permissions in PostgreSQL are scoped to CRUD tables; DDL operations are blocked at runtime. |
+| **Suplantacion (Spoofing)** | Peticiones fraudulentas fingiendo ser un respondedor de incidentes. | Validacion de firmas de encabezado en endpoints de webhook; transporte local seguro en herramientas MCP. |
+| **Manipulacion (Tampering)** | Respuestas alucinadas generando parametros destructivos. | Los runbooks rechazan comandos de shell arbitrarios. Unicamente se aceptan parametros predefinidos y validados. |
+| **Repudio (Repudiation)** | Acciones operativas ejecutadas sin posibilidad de trazabilidad. | Cada operacion genera una entrada inmutable en `runbook_execution_logs` con contexto de invocador y marca de tiempo UTC. |
+| **Fuga de Informacion** | Agentes exponiendo credenciales de base de datos en registros. | El script `pre-commit-check.sh` previene la confirmacion de secretos. Las contraseñas residen unicamente en variables de entorno. |
+| **Denegacion de Servicio** | Invocacion descontrolada de reinicios en bucle infinito. | Limites de frecuencia (rate-limiting) en endpoints de diagnostico y ejecucion. |
+| **Elevacion de Privilegios** | Subagentes intentando eliminar esquemas o tablas. | La cuenta de base de datos en produccion restringe operaciones DDL en tiempo de ejecucion. |
 
 ---
 
-## 🛡️ 2. Defense-in-Depth Layers
+## 2. Capas de Defensa en Profundidad
 
-1. **Layer 1: Context Isolation (AGENTS.md & SKILL.md):** The agent operates within strict instructions, restricting actions to defined paths.
-2. **Layer 2: Schema Validation (OpenAPI & Pydantic):** Every input is strictly validated before touching application logic.
-3. **Layer 3: Bounded MCP Tools:** MCP tools only expose specific high-level API operations, preventing raw OS shell access.
-4. **Layer 4: Human-in-the-Loop Confirmation:** Destructive or service-impacting runbooks require explicit confirmation before execution.
+1. **Capa 1: Delimitacion de Contexto (AGENTS.md y SKILL.md):** El agente actua bajo limites estrictamente definidos.
+2. **Capa 2: Validacion de Esquema (OpenAPI y Pydantic):** Cada parametro se valida de forma estricta antes de ingresar a la logica de negocio.
+3. **Capa 3: Herramientas MCP Acotadas:** Las herramientas unicamente exponen acciones de alto nivel orientadas a incidentes, sin proveer acceso a la shell del sistema operativo.
+4. **Capa 4: Supervision Humana Obligatoria:** Los manuales que alteran la disponibilidad del servicio requieren autorizacion explicita previa a su ejecucion.

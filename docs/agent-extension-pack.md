@@ -1,52 +1,50 @@
-# Agent Extension Pack Documentation
+# Documentacion del Paquete de Extension de Agentes (Modulo 5)
 
-## Overview
+## 1. Descripcion General
 
-The **CloudOps Commander Agent Extension Pack** integrates modern coding assistants and autonomous agents into the DevOps and incident management lifecycle.
+El **Paquete de Extension de Agentes** de este proyecto permite que asistentes de codigo y agentes autonomos colaboren dentro del ciclo operativo y de desarrollo de software de forma controlada y disciplinada.
 
-Rather than giving an AI agent unrestricted access or relying on generic prompts, this extension pack provides:
-1. **Durable Instructions:** [AGENTS.md](../AGENTS.md) defining boundaries, testing procedures, and architecture.
-2. **Reusable Workflow (Skill):** `agent-capabilities/skills/investigate-incident/SKILL.md` defining how to systematically triage alerts.
-3. **Specialized Subagent:** `agent-capabilities/subagents/sre-responder.md` providing a focused role for incident diagnosis.
-4. **Tool Access (MCP Server):** `mcp-server/server.py` exposing four scoped operations.
-5. **Guardrail Hook:** `agent-hooks/pre-commit-check.sh` preventing secrets leakage and schema drifts.
-6. **Least Privilege Matrix:** `docs/permissions.md` governing read vs execute authority.
+En lugar de delegar permisos irrestrictos o utilizar instrucciones aisladas, esta arquitectura provee:
+1. **Instrucciones de Contexto Duradero:** Definidas en [AGENTS.md](../AGENTS.md) con especificaciones de arquitectura, directrices de diseno y comandos de verificacion.
+2. **Procedimiento Operativo Reutilizable (Skill):** En [agent-capabilities/skills/investigate-incident/SKILL.md](../agent-capabilities/skills/investigate-incident/SKILL.md), estructurando el paso a paso del triaje de incidentes.
+3. **Subagente Especializado:** Definido en [agent-capabilities/subagents/sre-responder.md](../agent-capabilities/subagents/sre-responder.md), acotando la responsabilidad a tareas operativas de guardia.
+4. **Servidor Model Context Protocol (MCP):** Implementado en [mcp-server/server.py](../mcp-server/server.py), proveyendo cuatro herramientas especializadas accesibles via protocolo estandar.
+5. **Mecanismo de Salvaguarda (Guardrail Hook):** Provisto en [agent-hooks/pre-commit-check.sh](../agent-hooks/pre-commit-check.sh), impidiendo fugas involuntarias de credenciales y desalineaciones de esquema.
+6. **Matriz de Privilegios Minimos:** Especificada en [docs/permissions.md](permissions.md), delimitando que operaciones requieren autorizacion humana obligatoria.
 
 ---
 
-## Demo Script (End-to-End Workflow)
-
-Follow this 6-step workflow to demonstrate the Agent Extension Pack:
+## 2. Guion de Demostracion (Flujo de Ejecucion Paso a Paso)
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Dev as Developer / Evaluator
-    participant Agent as AI Coding Agent
-    participant MCP as MCP Server
-    participant API as CloudOps API
-    participant Hook as Guardrail Hook
+    actor Desarrollador as Evaluador / Ingeniero
+    participant Agente as Agente de IA
+    participant MCP as Servidor MCP
+    participant API as API de CloudOps
+    participant Gancho as Gancho de Salvaguarda
 
-    Dev->>Agent: "An alert fired for srv-orders. Investigate and remediate."
-    Agent->>Agent: Reads AGENTS.md & activates investigate-incident skill
-    Agent->>MCP: Call list_active_incidents()
+    Desarrollador->>Agente: "Una alerta se disparo en srv-orders. Diagnostica y sugiere mitigacion."
+    Agente->>Agente: Lee AGENTS.md y activa la habilidad investigate-incident
+    Agente->>MCP: Invoca list_active_incidents()
     MCP->>API: GET /api/v1/incidents
-    API-->>MCP: Returns active incident inc-101
-    Agent->>MCP: Call trigger_ai_investigation("inc-101")
+    API-->>MCP: Retorna incidente activo inc-101
+    Agente->>MCP: Invoca trigger_ai_investigation("inc-101")
     MCP->>API: POST /api/v1/incidents/inc-101/investigate
-    API-->>MCP: Returns root cause & recommended rb-restart-service
-    Agent->>Dev: "Root cause found: deadlocks on checkout. Execute rb-restart-service?"
-    Dev->>Agent: "Approved. Proceed."
-    Agent->>MCP: Call execute_remediation_runbook("rb-restart-service", "inc-101")
+    API-->>MCP: Retorna diagnostico y runbook recomendado rb-restart-service
+    Agente->>Desarrollador: "Causa identificada: bloqueo en base de datos. Se sugiere ejecutar rb-restart-service. Desea proceder?"
+    Desarrollador->>Agente: "Autorizado. Proceder."
+    Agente->>MCP: Invoca execute_remediation_runbook("rb-restart-service", "inc-101")
     MCP->>API: POST /api/v1/runbooks/rb-restart-service/execute
-    API-->>MCP: Execution SUCCESS (latency back to 22ms)
-    Agent->>Hook: Triggers pre-commit validation hook before logging changes
-    Hook-->>Agent: All checks passed (0 secret leaks, tests passed)
+    API-->>MCP: Ejecucion completada exitosamente
+    Agente->>Gancho: Ejecuta verificacion de pre-commit antes de registrar cambios
+    Gancho-->>Agente: Verificacion aprobada (0 fugas de secretos, pruebas superadas)
 ```
 
-1. **Step 1:** The agent reads `AGENTS.md` to identify the system conventions.
-2. **Step 2:** The agent invokes `investigate-incident` skill.
-3. **Step 3:** The agent queries `mcp-server` to fetch the telemetry and active incidents.
-4. **Step 4:** The agent triggers the AI investigation endpoint to diagnose the root cause.
-5. **Step 5:** The agent asks for human-in-the-loop confirmation before running the remediation runbook.
-6. **Step 6:** The guardrail hook verifies that the remediation logged is safe and leaves no credential leaks.
+1. **Paso 1:** El agente lee `AGENTS.md` para asimilar la estructura y lineamientos del repositorio.
+2. **Paso 2:** El agente carga la habilidad `investigate-incident`.
+3. **Paso 3:** El agente consulta las herramientas del servidor MCP para obtener el inventario de incidentes y la telemetria actual.
+4. **Paso 4:** El agente activa el analisis de causas raiz mediante el endpoint de diagnostico.
+5. **Paso 5:** El agente solicita autorizacion humana antes de despachar acciones de recuperacion con impacto sobre el servicio.
+6. **Paso 6:** El mecanismo de salvaguarda valida que no se introduzcan regresiones de seguridad ni credenciales expuestas.

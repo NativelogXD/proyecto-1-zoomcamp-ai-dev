@@ -1,59 +1,59 @@
-# Product Specification: CloudOps Commander (AI Incident & Operations Platform)
+# Especificacion del Producto: Proyecto 1 Zoomcamp AI Dev (CloudOps Commander)
 
-## 1. Executive Summary & Problem Statement
+## 1. Resumen Ejecutivo y Declaracion del Problema
 
-In modern cloud-native architectures, distributed microservices continuously generate high-velocity telemetry (metrics, distributed traces, and structured logs). When an outage or performance degradation occurs:
-- On-call Site Reliability Engineers (SREs) and DevOps professionals are flooded with alerts from monitoring systems (Grafana, Prometheus, Datadog).
-- Triage is slow and error-prone: engineers spend 15 to 45 minutes manually correlating error traces, cross-referencing recent code deployments, and hunting for root causes in disparate log files.
-- Remediation actions (restarting containers, clearing distributed cache, rolling back canary deployments) are frequently delayed, increasing Mean Time to Resolution (MTTR) and user impact.
+En las arquitecturas modernas basadas en microservicios distribuidos, los sistemas emiten continuamente volumenes elevados de telemetria (metricas, trazas distribuidas y registros estructurados). Cuando ocurre una interrupcion de servicio o degradacion de rendimiento:
+- Los ingenieros de confiabilidad de sitios (SRE) y profesionales de DevOps se enfrentan a una fatiga constante de alertas provenientes de sistemas de monitoreo como Prometheus o Grafana.
+- El proceso de clasificacion y diagnostico inicial resulta lento y propenso a errores: se invierten entre 15 y 45 minutos correlacionando manualmente trazas de error, verificando despliegues recientes de codigo e inspeccionando registros en componentes heterogeneos.
+- Las acciones de mitigacion (reinicio ordenado de contenedores, purga de caches distribuidas, escalado de replicas o reversiones de versiones) se demoran innecesariamente, incrementando el Tiempo Medio de Resolucion (MTTR) y el impacto sobre los usuarios.
 
-**CloudOps Commander** solves this by delivering an autonomous, AI-assisted incident management and operations platform:
-1. Ingests alerts in real time via standardized webhooks.
-2. Tracks microservice health metrics and incident lifecycles.
-3. Automatically synthesizes evidence packets (error logs, stack traces, latency anomalies, commit diffs) and delegates diagnostic reasoning to an AI Incident Investigator.
-4. Provides validated, bounded SRE Runbooks that can be executed safely with human-in-the-loop oversight or automated policies.
-
----
-
-## 2. Target Users & User Stories
-
-### Target Users
-- **Site Reliability Engineers (SREs):** Need immediate root-cause synthesis and one-click runbook remediation when alerts trigger.
-- **Backend & DevOps Engineers:** Need observability into service dependencies, automated incident post-mortems, and standardized operational playbooks.
-- **Engineering Leads:** Require visibility into system uptime, incident frequency, MTTR, and security governance around AI tooling.
-
-### User Stories
-- **US-1 (Service Health Monitoring):** As an SRE, I want to view a real-time topology of all monitored microservices with latency, uptime, and health state (Healthy, Degraded, Down) so I can spot issues instantly.
-- **US-2 (Alert Ingestion):** As a DevOps engineer, I want Prometheus/Grafana alert webhooks to automatically open incidents with appropriate severity (P1-Critical to P4-Low).
-- **US-3 (AI Root-Cause Investigation):** As an on-call responder, I want to trigger an AI investigation for any incident to receive an evidence-backed diagnosis, root-cause explanation, and recommended remediation action in seconds.
-- **US-4 (SRE Runbook Execution):** As an operator, I want to execute pre-approved runbooks (e.g. `restart_service`, `flush_redis_cache`, `rollback_deployment`, `scale_replicas`) with parameter validation and see real-time execution audit logs.
-- **US-5 (Incident Lifecycle & Audit):** As an engineering lead, I want full historical tracking of incidents, resolution timestamps, and an audit trail of who executed which action.
+**Proyecto 1 Zoomcamp AI Dev (CloudOps Commander)** aborda este problema mediante una plataforma integral y disciplinada de gestion operativa de incidentes asistida por inteligencia artificial:
+1. Ingesta alertas en tiempo real mediante webhooks estandarizados.
+2. Supervisa el estado de salud y los acuerdos de nivel de servicio (SLA) de la flota de microservicios.
+3. Sintetiza automaticamente paquetes de evidencia (registros de error, trazas de ejecucion, anomalias de latencia y diferencias de versiones de codigo) y delega el diagnostico estructurado a un motor de investigacion asistido por IA.
+4. Provee procedimientos operativos estandarizados (Runbooks SRE) acotados, seguros y validados, ejecutables bajo un esquema de control con supervision humana o de forma automatizada.
 
 ---
 
-## 3. Acceptance Criteria (Functional Requirements)
+## 2. Usuarios Objetivo e Historias de Usuario
 
-1. **System Health & Observability:**
-   - Standard `/healthz` endpoint returning `{ "status": "ok", "timestamp": "...", "database": "connected" }`.
-   - Microservices catalog with configurable SLAs, current status, error rates, and p95 latency.
-2. **Incident Management:**
-   - Full CRUD endpoints strictly adhering to `openapi.yaml`.
-   - State machine transitions: `OPEN` ➔ `INVESTIGATING` ➔ `MITIGATED` ➔ `RESOLVED`.
-   - Severity levels: `P1` (Critical), `P2` (High), `P3` (Medium), `P4` (Low).
-3. **AI Incident Investigator:**
-   - Generates deterministic root-cause analysis based on log patterns, error fingerprints, and telemetry context.
-   - Outputs confidence score (0-100%), suspected component, and recommended runbook ID.
-4. **Interactive Runbook Runner:**
-   - Catalog of standard runbooks with schema-validated input parameters.
-   - Atomic simulated execution returning status code, logs, and state transition.
-5. **Contract Adherence & Persistence:**
-   - 100% of frontend/backend communication follows `openapi.yaml`.
-   - Database layer supports SQLite (local development and test suite) and PostgreSQL (production and Docker Compose).
+### Usuarios Objetivo
+- **Ingenieros de Confiabilidad (SRE):** Requieren sintesis inmediata de causas raiz y ejecucion segura de procedimientos de mitigacion al recibir alertas.
+- **Ingenieros de Backend y DevOps:** Necesitan visibilidad centralizada sobre dependencias de servicios, generacion consistente de reportes post-mortem y estandarizacion de manuales de operacion.
+- **Lideres Tecnicos:** Demandan trazabilidad completa de disponibilidad del sistema, frecuencia de incidentes, evolucion del MTTR y politicas estrictas de gobernanza sobre herramientas de IA.
+
+### Historias de Usuario
+- **HU-1 (Supervision de Salud de Microservicios):** Como ingeniero SRE, quiero visualizar en tiempo real el estado de salud (Saludable, Degradado, Fuera de Servicio), latencia p95 y tasa de errores de cada microservicio para identificar anomalias oportunamente.
+- **HU-2 (Ingesta Automatizada de Alertas):** Como ingeniero DevOps, quiero que los webhooks procedentes de Prometheus o Grafana Alertmanager generen automaticamente incidentes categorizados por severidad (P1-Critico a P4-Bajo).
+- **HU-3 (Diagnostico de Causa Raiz por IA):** Como responsable de guardia operativa, quiero solicitar un analisis de diagnostico para cualquier incidente activo y recibir un reporte respaldado por evidencia tecnica, porcentaje de confianza y recomendacion de remediacion en segundos.
+- **HU-4 (Ejecucion Segura de Procedimientos Operativos):** Como operador de sistemas, quiero ejecutar procedimientos previamente aprobados (reinicio de servicio, purga de cache, escalado de replicas, reversion de version) con validacion estricta de parametros y registro de auditoria.
+- **HU-5 (Ciclo de Vida del Incidente y Auditoria):** Como lider de ingenieria, quiero disponer de un registro historico inmutable de todas las acciones ejecutadas, marcas de tiempo UTC de mitigacion y resolucion final de incidentes.
 
 ---
 
-## 4. Non-Goals (Out of Scope for MVP)
+## 3. Criterios de Aceptacion y Requisitos Funcionales
 
-- Complex enterprise SAML/SSO authentication (uses role-based header/token stub for MVP).
-- Direct SSH execution against arbitrary bare-metal host instances (runbooks execute through containerized orchestrator mock/APIs).
-- Multi-region geo-distributed database clustering.
+1. **Salud del Sistema y Observabilidad:**
+   - Endpoint estandar `/healthz` que responda con el estado operativo, marca de tiempo UTC y estado de conexion a la base de datos.
+   - Catalogo de microservicios con metricas de latencia, disponibilidad porcentual y porcentaje de error.
+2. **Gestion del Ciclo de Vida de Incidentes:**
+   - Endpoints REST en estricta conformidad con el contrato `openapi.yaml`.
+   - Transiciones de estado finitas: `OPEN` -> `INVESTIGATING` -> `MITIGATED` -> `RESOLVED`.
+   - Niveles de severidad normalizados: `P1`, `P2`, `P3`, `P4`.
+3. **Motor de Diagnostico de Incidentes:**
+   - Evaluacion determinista basada en huellas de error, registros estructurados y contexto de despliegues.
+   - Emision de puntaje de confianza numerico (0-100%), descripcion de causa raiz y referencia al identificador del runbook sugerido.
+4. **Ejecutor de Procedimientos Operativos (Runbooks):**
+   - Catalogo de procedimientos con validacion de parametros contra esquemas definidos.
+   - Registro de duracion de ejecucion en milisegundos y captura de trazas de registro de auditoria.
+5. **Persistencia Dual y Contrato de API:**
+   - Cumplimiento estricto del contrato canónico OpenAPI 3.0 en todas las interacciones cliente-servidor.
+   - Capa de persistencia compatible con SQLite (para desarrollo local y pruebas automatizadas) y PostgreSQL (para entornos de produccion y orquestacion con Docker Compose).
+
+---
+
+## 4. Alcance Excluido (No-Metas para el Producto Minimo Viable)
+
+- Autenticacion corporativa compleja mediante proveedores SAML/SSO externos (se utiliza esquema simplificado para MVP).
+- Ejecucion directa de comandos SSH arbitrarios sobre instancias fisicas sin contencion (las acciones se limitan a controladores de contenedores y APIs internas).
+- Replicacion geografica distribuida de bases de datos multirregion.

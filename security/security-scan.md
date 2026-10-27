@@ -1,64 +1,63 @@
-# Security Audit & Vulnerability Scan Report
+# Reporte de Auditoria de Seguridad y Escaneo de Vulnerabilidades
 
-> **Target:** CloudOps Commander (Backend + Frontend + MCP Server)  
-> **Date:** 2026-10-27  
-> **Status:** PASSED (0 High / 0 Critical)
+Proyecto: Proyecto 1 Zoomcamp AI Dev (CloudOps Commander)  
+Fecha: 2026-10-27  
+Estado de Evaluacion: APROBADO (0 Vulnerabilidades Altas / 0 Criticas)
 
 ---
 
-## 🔍 1. Static Application Security Testing (SAST)
+## 1. Analisis Estatico de Seguridad de Codigo (SAST)
 
-### Tool: Bandit (Python AST Security Scanner)
+### Herramienta: Bandit (Analizador AST de Python)
 ```text
-Run started: 2026-10-27 12:40:00 UTC
-Files analyzed: 18
-Lines of code: 1,240
+Inicio de analisis: 2026-10-27 12:40:00 UTC
+Archivos analizados: 18
+Lineas de codigo: 1,240
 
-Results:
->> Issue: None
-Total issues (by severity):
-   Undefined: 0
-   Low: 0
-   Medium: 0
-   High: 0
-Total issues (by confidence):
-   Undefined: 0
-   Low: 0
-   Medium: 0
-   High: 0
+Resultados:
+Problemas detectados: Ninguno
+Total por severidad:
+   Indefinida: 0
+   Baja: 0
+   Media: 0
+   Alta: 0
+Total por confianza:
+   Indefinida: 0
+   Baja: 0
+   Media: 0
+   Alta: 0
 ```
-- **Finding:** No unsafe `eval()`, `exec()`, or unsanitized SQL string interpolations detected. All database queries use SQLAlchemy parameter binding.
+- **Conclusion:** No se detectaron funciones riesgosas como `eval()`, `exec()` ni concatenaciones de sentencias SQL inseguras. Todas las operaciones utilizan vinculacion de parametros mediante SQLAlchemy.
 
 ---
 
-## 📦 2. Dependency Vulnerability Audit
+## 2. Auditoria de Dependencias
 
-### Tool: Pip-Audit / Safety
+### Herramienta: Pip-Audit
 ```text
-Scanning Python environment: backend/.venv
-Found dependencies: 35 packages
-Results: 0 known vulnerabilities found in installed package set.
-- fastapi: 0.162.0 (Clean)
-- sqlalchemy: 2.1.6 (Clean)
-- psycopg: 3.3.6 (Clean)
-- uvicorn: 0.54.0 (Clean)
+Analisis de entorno virtual: backend/.venv
+Dependencias verificadas: 35 paquetes
+Resultados: 0 vulnerabilidades conocidas en el conjunto de paquetes instalados.
+- fastapi: 0.162.0 (Verificado)
+- sqlalchemy: 2.1.6 (Verificado)
+- psycopg: 3.3.6 (Verificado)
+- uvicorn: 0.54.0 (Verificado)
 ```
 
 ---
 
-## 🐳 3. Container Image Scanning (Trivy)
+## 3. Escaneo de Imagenes de Contenedores
 
-### Backend Image (`cloudops-backend:latest`)
+### Imagen de Backend (`cloudops-backend:latest`)
 - **Base:** `python:3.12-slim`
-- **Result:** Minimal debian packages installed. No open CVEs above medium.
-- **Rootless execution ready:** Application executes via non-root daemon configuration.
+- **Resultado:** Paquetes minimos del sistema operativo. Sin vulnerabilidades reportadas por encima de nivel medio.
 
-### Frontend Image (`cloudops-frontend:latest`)
+### Imagen de Frontend (`cloudops-frontend:latest`)
 - **Base:** `nginx:alpine`
-- **Result:** Lightweight Alpine base with minimal attack surface.
+- **Resultado:** Base minima Alpine con superficie de ataque reducida.
 
 ---
 
-## 🛡️ 4. Secret & Leak Prevention (Git Secrets Check)
-- Evaluated via `agent-hooks/pre-commit-check.sh`.
-- Scanned repository history for hardcoded tokens, passwords, and private certificates: **0 leaks found**.
+## 4. Deteccion de Secretos en Control de Versiones
+- Verificado mediante el script de salvaguarda `agent-hooks/pre-commit-check.sh`.
+- Resultado del escaneo de patrones criptograficos y credenciales: **0 fugas detectadas**.
